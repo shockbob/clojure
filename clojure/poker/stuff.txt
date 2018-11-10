@@ -1,0 +1,16 @@
+(println "single-hand-always-wins"
+   (f ["4S 5S 7H 8D JC"] ["4S 5S 7H 8D JC"]))
+
+(println "highest-card-out-of-all-hands-wins"
+   (f ["4D 5S 6S 8D 3C"
+          "2S 4C 7S 9H 10H"
+          "3S 4S 5D 6H JH"]
+         ["3S 4S 5D 6H JH"]))
+
+(println "a-tie-has-multiple-winners"
+   (f ["4D 5S 6S 8D 3C"
+          "2S 4C 7S 9H 10H"
+          "3S 4S 5D 6H JH"
+          "3H 4H 5C 6C JD"]
+         ["3S 4S 5D 6H JH"
+          "3H 4H 5C 6C JD"]))
