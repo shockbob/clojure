@@ -1,35 +1,31 @@
 (ns spiral-matrix)
 
 (defn square [n]
-    (apply vector 
-       ( map (partial apply vector)        
-             (repeat n (repeat n 0)))))
+    (vec (map vec (repeat n (repeat n 0)))))
 
-(defn inrange-ex [i min-i max-i]
-  (and (>= i 0)(< i max-i)))
+(defn inrange [[row col] a n]
+    (and (< -1 row n) (< -1 col n) (zero? (get-in a [row col]))))
 
-(defn inrange [row col  a]
-    (and (inrange-ex row 0 (count a))
-         (inrange-ex col 0 (count (a 0)))
-           (zero? ((a row) col))))
+(defn turn90 [[dr dc]]
+   [dc (- dr)])
 
-(defn spr [arr row col row-dir col-dir start]
-   (if (pos? ((arr row) col))
-      arr
-      (let [arr (assoc-in arr [row col] start)
-         new-row (+ row row-dir)
-         new-col (+ col col-dir)]
-         (if (inrange new-row new-col arr)
-             (recur arr new-row new-col row-dir col-dir (inc start))
-             (let [new-row-dir col-dir
-                   new-col-dir (- row-dir)
-                   row (+ new-row-dir row)
-                   col (+ new-col-dir col)]
-                   (recur arr row col new-row-dir new-col-dir (inc start))))))) 
+(defn move [[row col] [dr dc]] 
+   [(+ row dr) (+ col dc)])
+
+(defn spr [n] 
+    (loop [arr (square n) n n loc [0 0] dir [0 1] start 1]
+        (if (pos? (get-in arr loc))
+           arr
+           (let [arr (assoc-in arr loc start)
+                 new-loc (move loc dir)]
+                 (if (inrange new-loc arr n)
+                     (recur arr n new-loc dir (inc start))
+                     (let [dir (turn90 dir) 
+                           loc (move loc dir)] 
+                         (recur arr n loc dir (inc start))))))))
 
 (defn spiral [n]
    (cond
-    (zero? n) []
-    (= 1 n) [[1]] 
-    :else  (let [sqr (square n)]
-          (spr sqr 0 0 0 1 1))))
+      (zero? n) []
+      (= 1 n) [[1]] 
+      :else  (spr n)))
