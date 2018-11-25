@@ -1,22 +1,22 @@
-(ns diamond)
+(ns diamond
+   (:require [clojure.string :as str]))
 
 (def alphas "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 (defn spaces [n]
-   (apply str (repeat n " ")))
+   (str/join (repeat n \space)))
 
 (defn get-level [ch width]
-   (if (= ch \A)
-        (let [indent (spaces (quot width 2))]
-           (str indent \A indent))
        (let [offset (- (int ch) (int \A))
-             indent (spaces (- (quot width 2) offset))
-             center (spaces (- width (* 2 (count indent)) 2))]
+             indent-count (- (quot width 2) offset)
+             indent (spaces indent-count)
+             center (spaces (- width (* 2 indent-count) 2))]
+       (if (= ch \A) 
+           (str indent ch indent)
            (str indent ch center ch indent))))
 
-(defn diamond [ch] ;; <- arglist goes here
+(defn diamond [ch] 
    (let [level (- (int ch)(int \A))
          width (inc (* level 2))
          top (map (fn [c] (get-level c width)) (take (inc level) alphas))]
      (concat top (rest (reverse top)))))
-

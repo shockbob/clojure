@@ -29,11 +29,13 @@
     (apply max (map rank hand)))
 
 (defn high-card-1 [hand]
-    (let [rank (map rank hand)
-          sorted (sort-by (juxt last first) (frequencies rank))
-          sorted-by-rank-desc (reverse sorted)
-          rankx (rank15 (map first sorted-by-rank-desc)) ]
-         rankx))
+    (->> hand
+         (map rank)
+         (frequencies)
+         (sort-by (juxt last first))
+         (reverse)
+         (map first)
+         (rank15)))
 
 (defn high-card-straight [cards]
     (let [ranks (set (map rank cards))

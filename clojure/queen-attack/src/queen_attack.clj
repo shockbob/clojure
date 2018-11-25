@@ -4,8 +4,11 @@
 
 (def empty-board (mapv vec (vec (repeat 8 one-row)))) 
 
-(defn tostrs [vecs] 
+(defn- tostrs [vecs] 
     (apply str (mapv (partial apply str) vecs)))
+
+(defn- abs [n] (Math/abs n))
+
 
 (defn put-piece [board [row col] piece]
    (assoc-in board [row (* 2 col)] piece))
@@ -14,8 +17,6 @@
    (let [board (if (mp :w) (put-piece empty-board (mp :w) \W) empty-board)
          board (if (mp :b) (put-piece board (mp :b) \B) board)]
      (tostrs board)))
-
-(defn abs [n] (Math/abs n))
 
 (defn can-attack [piece-map]
      (if (and (piece-map :w) (piece-map :b))

@@ -8,11 +8,13 @@
            (dochange rm r (concat (repeat dv f) output )))))
 
 (defn get-coins [pennies coins] 
-    (let [coins (sort-by - coins)
-          all-coins (take-while first (iterate rest coins)) 
-          results (map (fn [c] (dochange pennies c [])) all-coins)
-          srt (sort-by count results)]
-      (first srt)))
+    (->> coins 
+         (sort-by -)
+         (iterate rest)
+         (take-while first)
+         (map (fn [c] (dochange pennies c [])))
+         (sort-by count)
+         (first)))
 
 (defn issue [pennies coins] 
     (cond 
@@ -20,4 +22,3 @@
         (not (some (fn [c] (< c pennies)) coins)) (throw (IllegalArgumentException."cannot change"))
         (neg? pennies) (throw (IllegalArgumentException."cannot change"))
         :else (get-coins pennies coins)))
-
