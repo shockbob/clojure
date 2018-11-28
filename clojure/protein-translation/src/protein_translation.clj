@@ -1,4 +1,5 @@
-(ns protein-translation)
+(ns protein-translation
+ (:require [clojure.string :as str]))
 
 (def codon->protein { "AUG"  "Methionine" "UUU" "Phenylalanine" "UUC" "Phenylalanine" "UUA" "Leucine"
 "UUG" "Leucine" "UCU" "Serine" "UCC" "Serine" "UCA" "Serine" "UCG" "Serine" "UAU" "Tyrosine"
@@ -8,8 +9,8 @@
    (codon->protein codon))
 
 (defn translate-rna [rna] 
-   (let [codons (map (partial apply str) (partition 3 rna))
-         proteins (map codon->protein codons)
-         proteins (take-while (fn [x] (not= "STOP" x)) proteins) ]
-    proteins))
-
+   (->> rna
+        (partition 3)
+        (map str/join) 
+        (map codon->protein)
+        (take-while #(not= "STOP" %))))
