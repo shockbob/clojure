@@ -1,12 +1,10 @@
-(ns acronym)
+(ns acronym
+   (:require [clojure.string :as str]))
 
 (defn convert-ch [c]
    (if (or (Character/isAlphabetic (int c))(= \space c))
        c
        \space))
-
-(defn capitalize [st]
-   (str (.toUpperCase (.substring st 0 1)) (.substring st 1)))
 
 (defn is-cap? [c]
    (<= (int \A) (int c) (int \Z)))
@@ -16,9 +14,19 @@
        (str (first word))
        word))
 
+(defn my-capitalize [st]
+   (str (.toUpperCase (.substring st 0 1)) (.substring st 1)))
+
+(defn split-it[s] (str/split s #" "))
+
 (defn acronym [st] 
-    (let [st (apply str (map convert-ch st))
-          words (remove empty? (.split  st " "))
-          words (map (comp fix-word capitalize) words)
-          caps (filter is-cap? (apply str words))]
-        (apply str caps))) 
+   (->> st
+        (map convert-ch)
+        (apply str)
+        (split-it)
+        (remove empty?)
+        (map fix-word)
+        (map my-capitalize)
+        (apply str)
+        (filter is-cap?)
+        (apply str)))

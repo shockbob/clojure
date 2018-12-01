@@ -1,17 +1,22 @@
 (ns bracket-push)
+(def brackets ["[]" "{}" "()"])
+(def opens (map first brackets))
+(def closes (map second brackets))
 
-(defn remove-bad [st] 
-    (apply str (keep #{\[ \] \{ \} \( \)} st)))
+(def opens-set (set opens)) 
+(def opens-and-closes (set (concat opens closes))) 
+(def opens-to-closes (zipmap opens closes)) 
 
-(defn remove-matches [st]
-   (if (empty? st)
-       true
-       (let [st-new (.replace st "[]"  "")
-             st-new (.replace st-new "{}" "")
-             st-new (.replace st-new "()" "")]
-          (if (= st st-new)
-              false
-              (remove-matches st-new)))))
+(defn- brackets-match? [stack [f & r]]
+     (if (nil? f)
+         (empty? stack)
+         (if (contains? opens-set f)
+            (brackets-match? (concat [f] stack) r) 
+            (if (= (opens-to-closes (first stack)) f)
+                (brackets-match? (rest stack) r) 
+                false)))) 
 
-(defn valid? [st] 
-    (remove-matches (remove-bad st)))
+(defn valid? [string] 
+   (->> string
+        (keep opens-and-closes)
+        (brackets-match? [])))

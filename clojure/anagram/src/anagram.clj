@@ -1,11 +1,11 @@
-(ns anagram)
+(ns anagram
+   (:require [clojure.string :as str]))
 
 (defn fixit [s] 
-  (apply str (sort (.toLowerCase s))))
+  (str/join (sort (str/lower-case s))))
 
 (defn anagrams-for [word prospect-list] 
-  (let [fixed-word (fixit word)]
-     (filter (fn [wrd] (and (not= (.toLowerCase word)(.toLowerCase wrd)) 
-                            (= fixed-word (fixit wrd)))) 
-              prospect-list))) 
+   (->> prospect-list
+        (filter #(and (not= (str/lower-case word)(str/lower-case %)) 
+                      (= (fixit word) (fixit %)))))) 
 
